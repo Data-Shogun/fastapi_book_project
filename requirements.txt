@@ -3,3 +3,6 @@ uvicorn
 black
 pylint
 fire
+sqlalchemy
+alembic
+python-dotenv

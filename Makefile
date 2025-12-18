@@ -7,7 +7,7 @@ format:
 	black *.py routers/*.py
 lint:
 	#Lint code with pylint
-	pylint --ignore=R,C *.py router/*.py
+	python -m pylint --disable=R,C *.py routers/*.py
 test:
 	#Run tests
 build:
@@ -16,4 +16,4 @@ run:
 	#Run container
 deploy:
 	#Deploy the project
-
+all: install lint test deploy
