@@ -4,7 +4,7 @@ from starlette import status
 from sqlalchemy.orm import Session
 from database import SessionLocal
 from models import User
-from .auth import get_current_user
+from routers.auth import get_current_user
 
 
 router = APIRouter(prefix="/users", tags=["users"])

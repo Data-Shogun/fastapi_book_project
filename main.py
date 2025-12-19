@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from routers import auth, users
+from routers import auth, users, books
 
 
 app = FastAPI(title="Books application bundled with N8N", version="1.0.0")
@@ -7,6 +7,7 @@ app = FastAPI(title="Books application bundled with N8N", version="1.0.0")
 
 app.include_router(auth.router)
 app.include_router(users.router)
+app.include_router(books.router)
 
 
 if __name__ == "__main__":

@@ -54,10 +54,10 @@ async def get_current_user(token: Annotated[str, Depends(oauth_bearer)]):
         user_id = decode.get("id")
         user_role = decode.get("role")
         return {"username": username, "id": user_id, "role": user_role}
-    except JWTError:
+    except JWTError as exc:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Token validation failed."
-        )
+        ) from exc
 
 
 db_dependency = Annotated[Session, Depends(get_db)]
@@ -98,9 +98,9 @@ async def add_new_user(create_user_request: CreateUserRequest, db: db_dependency
     try:
         db.add(create_user_model)
         db.commit()
-    except Exception:
+    except Exception as exc:
         db.rollback()
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR) from exc
 
 
 @router.post("/token", response_model=Token)
