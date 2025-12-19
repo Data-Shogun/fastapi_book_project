@@ -8,12 +8,13 @@ format:
 lint:
 	#Lint code with pylint
 	python -m pylint --disable=R,C *.py routers/*.py
+run:
+	#Run app
+	uvicorn main:app --reload
 test:
 	#Run tests
 build:
 	#Build container
-run:
-	#Run container
 deploy:
 	#Deploy the project
 all: install lint test deploy

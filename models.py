@@ -10,6 +10,7 @@ class User(Base):
     email = Column(String(100), unique=True, nullable=False)
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
+    role = Column(String(100))
 
 
 class Book(Base):

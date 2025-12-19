@@ -14,5 +14,6 @@ class Config:
     # Database config
     SQL_DATABASE_URL = os.getenv("SQL_DATABASE_URL")
 
-    # Secret Keys
-    JWT_SECRET_KEY = os.getenv("SECRET_KEY")
+    # JWT
+    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+    JWT_HASH_ALGORITHM = os.getenv("JWT_HASH_ALGORITHM")

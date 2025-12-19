@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import create_session
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from config import Config
 
@@ -13,6 +13,6 @@ if SQL_DATABASE_URL.startswith("sqlite"):
 else:
     engine = create_engine(url=SQL_DATABASE_URL)
 
-SessionLocal = create_session(autocommit=False, autoflush=False, bind=engine)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
