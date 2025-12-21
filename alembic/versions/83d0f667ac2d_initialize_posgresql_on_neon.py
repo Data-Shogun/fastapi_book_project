@@ -1,8 +1,8 @@
-"""Initial migration
+"""Initialize PosgreSQL on Neon
 
-Revision ID: dda687e43905
+Revision ID: 83d0f667ac2d
 Revises: 
-Create Date: 2025-12-19 16:05:07.611716
+Create Date: 2025-12-21 14:05:22.594316
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'dda687e43905'
+revision: str = '83d0f667ac2d'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -27,6 +27,7 @@ def upgrade() -> None:
     sa.Column('email', sa.String(length=100), nullable=False),
     sa.Column('hashed_password', sa.String(), nullable=True),
     sa.Column('is_active', sa.Boolean(), nullable=True),
+    sa.Column('role', sa.String(length=100), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
     sa.UniqueConstraint('username')
@@ -39,7 +40,7 @@ def upgrade() -> None:
     sa.Column('summary', sa.String(), nullable=True),
     sa.Column('category', sa.String(), nullable=True),
     sa.Column('owner_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['owner_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['owner_id'], ['users.id'], ondelete='cascade'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_books_id'), 'books', ['id'], unique=False)
