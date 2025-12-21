@@ -15,7 +15,7 @@ jobs:
     - name: Fromat code
       run: |
         make format
-    - name: Lint code:
+    - name: Lint code
       run: |
         make lint
     - name: Test with pytest
