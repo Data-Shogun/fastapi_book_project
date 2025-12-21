@@ -15,6 +15,7 @@ test:
 	#Run tests
 build:
 	#Build container
+	docker build -t fastapi-book-app .
 deploy:
 	#Deploy the project
-all: install lint test deploy
+all: install lint test run 

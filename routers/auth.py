@@ -47,12 +47,19 @@ def create_access_token(
     return jwt.encode(encode, key=JWT_SECRET_KEY, algorithm=JWT_HASH_ALGORITHM)
 
 
-async def get_current_user(token: Annotated[str, Depends(oauth_bearer)]):
+async def get_current_user(token: Annotated[str, Depends(oauth_bearer)], db: db_dependency):
     try:
         decode = jwt.decode(token, key=JWT_SECRET_KEY, algorithms=[JWT_HASH_ALGORITHM])
-        username = decode.get("sub")
-        user_id = decode.get("id")
-        user_role = decode.get("role")
+        username: str = decode.get("sub")
+        user_id: int = decode.get("id")
+        user_role: str = decode.get("role")
+        # Check whether user still exists
+        user = db.query(User).filter(User.username==username).first()
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="User does not exist anymore"
+            )
         return {"username": username, "id": user_id, "role": user_role}
     except JWTError as exc:
         raise HTTPException(

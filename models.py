@@ -21,4 +21,4 @@ class Book(Base):
     author = Column(String, nullable=False)
     summary = Column(String, nullable=True)
     category = Column(String, nullable=True)
-    owner_id = Column(Integer, ForeignKey("users.id"))
+    owner_id = Column(Integer, ForeignKey("users.id", ondelete="cascade"))

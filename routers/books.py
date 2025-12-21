@@ -32,6 +32,15 @@ class AddBookRequest(BaseModel):
     title: str = Field(max_length=200)
     author: str = Field(max_length=200)
 
+    model_config = {
+        'json_schema_extra': {
+            'example': {
+                'title': 'Deep Work',
+                'author': 'Cal Newport'
+            }
+        }
+    }
+
 
 @router.get("/my-books", status_code=status.HTTP_200_OK)
 async def get_all_books(user: user_dependency, db: db_dependency):
@@ -56,7 +65,9 @@ async def add_new_book(
 
     payload = {"title": add_book_request.title, "author": add_book_request.author}
 
-    response_dict = json.loads(requests.post(N8N_WEBHOOK_URL, json=payload, timeout=60e3).content)
+    response_dict = json.loads(
+        requests.post(N8N_WEBHOOK_URL, json=payload, timeout=60e3).content
+    )
     if "output" in response_dict:
         result = response_dict["output"]
     else:
