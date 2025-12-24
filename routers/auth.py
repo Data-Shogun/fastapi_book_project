@@ -47,6 +47,9 @@ def create_access_token(
     return jwt.encode(encode, key=JWT_SECRET_KEY, algorithm=JWT_HASH_ALGORITHM)
 
 
+db_dependency = Annotated[Session, Depends(get_db)]
+
+
 async def get_current_user(token: Annotated[str, Depends(oauth_bearer)], db: db_dependency):
     try:
         decode = jwt.decode(token, key=JWT_SECRET_KEY, algorithms=[JWT_HASH_ALGORITHM])
@@ -65,9 +68,6 @@ async def get_current_user(token: Annotated[str, Depends(oauth_bearer)], db: db_
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Token validation failed."
         ) from exc
-
-
-db_dependency = Annotated[Session, Depends(get_db)]
 
 
 class CreateUserRequest(BaseModel):
@@ -112,8 +112,7 @@ async def add_new_user(create_user_request: CreateUserRequest, db: db_dependency
 
 @router.post("/token", response_model=Token)
 async def login_for_access_token(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency
-):
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency):
     user = authenticate_user(form_data.username, form_data.password, db)
 
     if not user:
