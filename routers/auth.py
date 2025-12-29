@@ -50,18 +50,20 @@ def create_access_token(
 db_dependency = Annotated[Session, Depends(get_db)]
 
 
-async def get_current_user(token: Annotated[str, Depends(oauth_bearer)], db: db_dependency):
+async def get_current_user(
+    token: Annotated[str, Depends(oauth_bearer)], db: db_dependency
+):
     try:
         decode = jwt.decode(token, key=JWT_SECRET_KEY, algorithms=[JWT_HASH_ALGORITHM])
         username: str = decode.get("sub")
         user_id: int = decode.get("id")
         user_role: str = decode.get("role")
         # Check whether user still exists
-        user = db.query(User).filter(User.username==username).first()
+        user = db.query(User).filter(User.username == username).first()
         if user is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="User does not exist anymore"
+                detail="User does not exist anymore",
             )
         return {"username": username, "id": user_id, "user_role": user_role}
     except JWTError as exc:
@@ -112,7 +114,8 @@ async def add_new_user(create_user_request: CreateUserRequest, db: db_dependency
 
 @router.post("/token", response_model=Token)
 async def login_for_access_token(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency):
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency
+):
     user = authenticate_user(form_data.username, form_data.password, db)
 
     if not user:

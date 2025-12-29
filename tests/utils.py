@@ -9,10 +9,12 @@ from routers.auth import bcrypt_context
 from main import app
 
 
-SQLALCHEMY_TEST_URL = 'sqlite:///./testdb.db'
+SQLALCHEMY_TEST_URL = "sqlite:///./testdb.db"
 
 
-engine = create_engine(SQLALCHEMY_TEST_URL, connect_args={'check_same_thread': False}, poolclass=StaticPool)
+engine = create_engine(
+    SQLALCHEMY_TEST_URL, connect_args={"check_same_thread": False}, poolclass=StaticPool
+)
 
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
@@ -31,41 +33,37 @@ def override_get_db():
 
 
 def override_get_current_user():
-    user = {
-        'username': 'testuser',
-        'id': 1,
-        'user_role': 'admin'
-    }
+    user = {"username": "testuser", "id": 1, "user_role": "admin"}
     return user
 
 
 @pytest.fixture
 def test_book():
     book = Book(
-        title='test_title',
-        author='test_author',
-        summary='test_summary',
-        category='test_category',
-        owner_id=1
+        title="test_title",
+        author="test_author",
+        summary="test_summary",
+        category="test_category",
+        owner_id=1,
     )
-    
+
     db = TestingSessionLocal()
     db.add(book)
     db.commit()
     yield book
     with engine.connect() as connection:
-        connection.execute(text('DELETE FROM books;'))
+        connection.execute(text("DELETE FROM books;"))
         connection.commit()
 
 
 @pytest.fixture
 def test_user():
     user = User(
-        username='testuser',
-        email='testuser@email.com',
-        hashed_password=bcrypt_context.hash('test1234!'),
+        username="testuser",
+        email="testuser@email.com",
+        hashed_password=bcrypt_context.hash("test1234!"),
         is_active=True,
-        role='admin'
+        role="admin",
     )
 
     db = TestingSessionLocal()
@@ -73,6 +71,5 @@ def test_user():
     db.commit()
     yield user
     with engine.connect() as connection:
-        connection.execute(text('DELETE FROM users;'))
+        connection.execute(text("DELETE FROM users;"))
         connection.commit()
-

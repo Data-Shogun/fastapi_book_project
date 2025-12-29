@@ -4,7 +4,7 @@ install:
 		pip install -r requirements.txt
 format:
 	#Format code with black
-	black *.py routers/*.py
+	black *.py routers/*.py tests/*.py
 lint:
 	#Lint code with pylint
 	python -m pylint --disable=R,C *.py routers/*.py

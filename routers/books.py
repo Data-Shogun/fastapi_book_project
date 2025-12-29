@@ -33,11 +33,8 @@ class AddBookRequest(BaseModel):
     author: str = Field(max_length=200)
 
     model_config = {
-        'json_schema_extra': {
-            'example': {
-                'title': 'Deep Work',
-                'author': 'Cal Newport'
-            }
+        "json_schema_extra": {
+            "example": {"title": "Deep Work", "author": "Cal Newport"}
         }
     }
 
@@ -59,10 +56,10 @@ async def get_book(book_id: int, user: user_dependency, db: db_dependency):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication failed."
         )
-    book = db.query(Book).filter(Book.id==book_id).first()
+    book = db.query(Book).filter(Book.id == book_id).first()
     if book is None:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail='Book not found.'
+            status_code=status.HTTP_404_NOT_FOUND, detail="Book not found."
         )
     return book
 
@@ -81,19 +78,19 @@ async def add_new_book(
 
     try:
         response = requests.post(N8N_WEBHOOK_URL, json=payload, timeout=60)
-        response.raise_for_status()     # raises for 4xx/5xx from N8N itself
+        response.raise_for_status()  # raises for 4xx/5xx from N8N itself
     except requests.exceptions.RequestException as exc:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Webhook service is unreachable or timedout."
+            detail="Webhook service is unreachable or timedout.",
         ) from exc
-    
+
     try:
         response_dict = json.loads(response.content)
     except json.JSONDecodeError as exc:
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
-            detail="Invalid response received from webhook service (malformed JSON)"
+            detail="Invalid response received from webhook service (malformed JSON)",
         ) from exc
 
     if "output" in response_dict:

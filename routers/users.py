@@ -26,8 +26,7 @@ db_dependency = Annotated[Session, Depends(get_db)]
 async def get_user(user: user_dependency, db: db_dependency):
     if user is None:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED
-            , detail="Authentication failed"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication failed"
         )
     user_model = db.query(User).filter(User.username == user.get("username")).first()
     return user_model
@@ -37,16 +36,15 @@ async def get_user(user: user_dependency, db: db_dependency):
 async def delete_current_user(user: user_dependency, db: db_dependency):
     if user is None:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED
-            , detail="Authentication failed"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication failed"
         )
     try:
-        db.query(User).filter(User.id==user.get('id')).delete()
+        db.query(User).filter(User.id == user.get("id")).delete()
         # Delete their books
-        db.query(Book).filter(Book.owner_id==user.get('id')).delete()
+        db.query(Book).filter(Book.owner_id == user.get("id")).delete()
         db.commit()
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-            detail="Database interaction failed"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Database interaction failed",
         ) from exc

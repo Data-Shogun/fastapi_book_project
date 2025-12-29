@@ -12,13 +12,12 @@ app.include_router(users.router)
 app.include_router(admin.router)
 
 
-@app.get('/healthy', status_code=status.HTTP_200_OK)
+@app.get("/healthy", status_code=status.HTTP_200_OK)
 async def get_health():
-    return {
-        'status': 'Healthy'
-    }
+    return {"status": "Healthy"}
 
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8080)
