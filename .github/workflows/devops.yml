@@ -3,6 +3,8 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      SQL_DATABASE_URL: ${{ secrets.SQL_DATABASE_URL }}
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python 3.14
@@ -18,10 +20,6 @@ jobs:
     - name: Lint code
       run: |
         make lint
-    - name: Create .env file
-      run: |
-        touch .env
-        echo "SQL_DATABASE_URL=${{ secrets.SQL_DATABASE_URL }}" >> .env
     - name: Test with pytest
       run: |
         make test
