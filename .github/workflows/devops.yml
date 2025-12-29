@@ -4,7 +4,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      SQL_DATABASE_URL: ${{ secrets.SQL_DATABASE_URL }}
+      SQL_DATABASE_URL: postgresql://neondb_owner:npg_Gfza4P1MQwET@ep-jolly-math-ad4f70k0-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python 3.14
