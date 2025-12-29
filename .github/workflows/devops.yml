@@ -5,6 +5,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SQL_DATABASE_URL: postgresql://neondb_owner:npg_Gfza4P1MQwET@ep-jolly-math-ad4f70k0-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+      # Safe values just for testing JWT functionality
+      JWT_SECRET_KEY: testsecretkey
+      JWT_HASH_ALGORITHM: HS256
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python 3.14
