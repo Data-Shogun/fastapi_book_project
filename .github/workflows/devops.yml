@@ -18,6 +18,10 @@ jobs:
     - name: Lint code
       run: |
         make lint
+    - name: Create .env file
+      run: |
+        touch .env
+        echo "SQL_DATABASE_URL=${{ secrets.SQL_DATABASE_URL }}" >> .env
     - name: Test with pytest
       run: |
         make test
