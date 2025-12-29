@@ -63,7 +63,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth_bearer)], db: db_
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="User does not exist anymore"
             )
-        return {"username": username, "id": user_id, "role": user_role}
+        return {"username": username, "id": user_id, "user_role": user_role}
     except JWTError as exc:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Token validation failed."

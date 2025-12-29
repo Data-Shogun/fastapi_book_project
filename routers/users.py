@@ -50,4 +50,3 @@ async def delete_current_user(user: user_dependency, db: db_dependency):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
             detail="Database interaction failed"
         ) from exc
-    

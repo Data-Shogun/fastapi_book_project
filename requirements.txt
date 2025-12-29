@@ -13,3 +13,6 @@ python-multipart
 python-jose
 requests
 pytest
+pytest-cov
+pytest-asyncio
+httpx

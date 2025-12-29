@@ -13,6 +13,7 @@ run:
 	uvicorn main:app --reload
 test:
 	#Run tests
+	python -m pytest -vv --disable-warnings --cov=routers --cov=main tests/*
 build:
 	#Build container
 	docker build -t fastapi-book-app .
