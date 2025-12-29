@@ -23,6 +23,11 @@ jobs:
         echo "SQL_DATABASE_URL=${{ secrets.SQL_DATABASE_URL }}" >> .env
         echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> .env
         echo "JWT_HASH_ALGORITHM=${{ secrets.JWT_HASH_ALGORITHM }}" >> .env
+    - name: Debug - Show .env content (REMOVE AFTER DEBUGGING)
+      run: |
+        echo "=== Content of .env file ==="
+        cat .env
+        echo "=== End of .env ==="
     - name: Fromat code
       run: |
         make format
