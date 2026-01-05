@@ -110,7 +110,7 @@ def test_add_new_user(test_user):
         "role": "regular_user",
     }
 
-    response = client.post("/auth/signup", json=create_user_request)
+    response = client.post("/auth/register", json=create_user_request)
 
     assert response.status_code == 201
 
