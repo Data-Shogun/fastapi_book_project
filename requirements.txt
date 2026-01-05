@@ -16,3 +16,5 @@ pytest
 pytest-cov
 pytest-asyncio
 httpx
+jinja2
+aiofiles

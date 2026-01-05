@@ -1,6 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
+from fastapi.templating import Jinja2Templates
 from starlette import status
+from starlette.responses import RedirectResponse
 from pydantic import BaseModel, Field
 from typing import Annotated
 from sqlalchemy.orm import Session
@@ -51,16 +53,16 @@ db_dependency = Annotated[Session, Depends(get_db)]
 
 
 async def get_current_user(
-    token: Annotated[str, Depends(oauth_bearer)], db: db_dependency
+    token: Annotated[str, Depends(oauth_bearer)]
 ):
+    
     try:
         decode = jwt.decode(token, key=JWT_SECRET_KEY, algorithms=[JWT_HASH_ALGORITHM])
         username: str = decode.get("sub")
         user_id: int = decode.get("id")
         user_role: str = decode.get("role")
-        # Check whether user still exists
-        user = db.query(User).filter(User.username == username).first()
-        if user is None:
+
+        if username is None or user_id is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="User does not exist anymore",
@@ -70,6 +72,12 @@ async def get_current_user(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Token validation failed."
         ) from exc
+
+
+def redirect_to_login():
+    redirect_response = RedirectResponse(url='/auth/login-page', status_code=status.HTTP_302_FOUND)
+    redirect_response.delete_cookie(key='access_token')
+    return redirect_response
 
 
 class CreateUserRequest(BaseModel):
@@ -84,7 +92,33 @@ class Token(BaseModel):
     token_type: str
 
 
-@router.post("/signup", status_code=status.HTTP_201_CREATED)
+## Pages ##
+
+templates = Jinja2Templates('templates')
+
+@router.get("/register-page")
+async def render_register_page(request: Request):
+
+    return templates.TemplateResponse('signup.html', {
+        'request': request,       
+    })
+
+
+@router.get("/login-page")
+async def render_login_page(request: Request):
+
+    return templates.TemplateResponse('login.html', {
+        'request': request,
+    })
+
+
+@router.get('/logout')
+async def logout_page():
+    return redirect_to_login()
+
+## Endpoints ##
+
+@router.post("/register", status_code=status.HTTP_201_CREATED)
 async def add_new_user(create_user_request: CreateUserRequest, db: db_dependency):
     existing_user = (
         db.query(User).filter(User.username == create_user_request.username).first()
@@ -108,6 +142,7 @@ async def add_new_user(create_user_request: CreateUserRequest, db: db_dependency
         db.add(create_user_model)
         db.commit()
     except Exception as exc:
+        print(exc)
         db.rollback()
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR) from exc
 
@@ -124,7 +159,7 @@ async def login_for_access_token(
         )
 
     token = create_access_token(
-        user.username, user.id, user.role, timedelta(minutes=30)
+        user.username, user.id, user.role, timedelta(days=7)
     )
 
     return {"access_token": token, "token_type": "Bearer"}

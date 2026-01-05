@@ -9,7 +9,7 @@ from .utils import (
     test_user,
     TestingSessionLocal,
     bcrypt_context,
-    User,
+    User
 )
 from routers.auth import (
     get_db,
@@ -18,11 +18,28 @@ from routers.auth import (
     JWT_SECRET_KEY,
     JWT_HASH_ALGORITHM,
     bcrypt_context,
+    authenticate_user,
+    HTTPException
 )
 
 
 app.dependency_overrides[get_db] = override_get_db
 app.dependency_overrides[get_current_user] = override_get_current_user
+
+
+def test_authenticate_user(test_user):
+    db = TestingSessionLocal()
+    is_authenicated_user = authenticate_user('testuser', 'test1234!', db)
+
+    assert is_authenicated_user.username == 'testuser'
+    assert is_authenicated_user.id == 1
+    assert is_authenicated_user.email == 'testuser@email.com'
+    assert is_authenicated_user.role == 'admin'
+    assert bcrypt_context.verify('test1234!', is_authenicated_user.hashed_password)
+
+    not_authenicated_user = authenticate_user('testuser', 'wrongpassword', db)
+
+    assert not_authenicated_user is False
 
 
 def test_create_access_token(test_user):
@@ -58,7 +75,7 @@ async def test_get_current_user_valid_token(test_user):
 
     db = TestingSessionLocal()
 
-    current_user = await get_current_user(token=token, db=db)
+    current_user = await get_current_user(token=token)
 
     assert current_user.get("user_role") == "admin"
 
@@ -68,6 +85,22 @@ async def test_get_current_user_valid_token(test_user):
     assert user_model.id == current_user.get("id")
     assert user_model.role == current_user.get("user_role")
 
+
+@pytest.mark.asyncio
+async def test_get_current_user_missing_payload(test_user):
+
+    encode = {"role": "user"}
+    token = jwt.encode(encode, key=JWT_SECRET_KEY, algorithm=JWT_HASH_ALGORITHM)
+
+    db = TestingSessionLocal()
+
+    with pytest.raises(HTTPException) as excinfo:
+        await get_current_user(token=token)
+
+    assert excinfo.value.status_code == 401
+    assert excinfo.value.detail == 'User does not exist anymore'
+
+    
 
 def test_add_new_user(test_user):
     create_user_request = {

@@ -1,0 +1,29 @@
+{% include 'layout.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', path='/css/login.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container main-content">
+  <form id="loginForm">
+    <div class="form-group mb-3">
+      <label for="username" class="form-label">Username</label>
+      <input type="text" class="form-control" id="username" name="username" placeholder="jamesbond" required
+        value="test">
+    </div>
+    <div class="form-group mb-3">
+      <label for="password" class="form-label">Password</label>
+      <input type="password" class="form-control" id="password" name="password" placeholder="test1234!" required
+        value="test1234!">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Login</button>
+  </form>
+
+  <p>Haven't singed up before? <a href="{{ url_for('render_register_page') }}">Register</a></p>
+
+</div>
+
+
+{% endblock %}
